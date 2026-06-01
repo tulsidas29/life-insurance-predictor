@@ -1,12 +1,11 @@
+%%writefile app.py
 
 import streamlit as st
 import pandas as pd
 import pickle
-import plotly.graph_objects as go
 
 st.set_page_config(
     page_title="Insure AI Predictor",
-    page_icon="🛡️",
     layout="wide"
 )
 
@@ -35,7 +34,7 @@ st.markdown("""
 
 st.markdown("""
 <div class="hero">
-<h1>🛡️ INSURE AI PREDICTOR</h1>
+<h1>INSURE AI PREDICTOR</h1>
 <h4>Protect Your Future With AI</h4>
 </div>
 """, unsafe_allow_html=True)
@@ -47,7 +46,7 @@ col1, col2 = st.columns(2)
 
 with col1:
 
-    st.subheader("👤 Applicant Information")
+    st.subheader("Applicant Information")
 
     age = st.number_input(
         "Age",
@@ -71,7 +70,7 @@ with col1:
 
 with col2:
 
-    st.subheader("🏥 Health & Employment Information")
+    st.subheader("Health And Employment Information")
 
     smoker = st.selectbox(
         "Smoker",
@@ -91,7 +90,10 @@ with col2:
 
 st.markdown("---")
 
-if st.button("🔍 Analyze Application", use_container_width=True):
+if st.button(
+    "Analyze Application",
+    use_container_width=True
+):
 
     data = pd.DataFrame({
         "Age": [age],
@@ -127,72 +129,27 @@ if st.button("🔍 Analyze Application", use_container_width=True):
         probability = 90
 
     if probability >= 80:
-        risk = "🟢 Low Risk"
+        risk = "Low Risk"
     elif probability >= 60:
-        risk = "🟡 Medium Risk"
+        risk = "Medium Risk"
     else:
-        risk = "🔴 High Risk"
+        risk = "High Risk"
 
-    result_col, chart_col = st.columns(2)
+    st.subheader("Prediction Result")
 
-    with result_col:
+    if prediction == 1:
+        st.success("Insurance Approved")
+    else:
+        st.error("Insurance Rejected")
 
-        st.subheader("📊 Prediction Result")
+    st.metric(
+        "Confidence Score",
+        f"{probability}%"
+    )
 
-        if prediction == 1:
-            st.success("✅ Insurance Approved")
-        else:
-            st.error("❌ Insurance Rejected")
-
-        st.metric(
-            "Confidence Score",
-            f"{probability}%"
-        )
-
-        st.info(risk)
-
-    with chart_col:
-
-        fig = go.Figure()
-
-        fig.add_trace(
-            go.Pie(
-                values=[
-                    probability,
-                    100 - probability
-                ],
-                hole=0.55,
-                textinfo="none"
-            )
-        )
-
-        fig.add_trace(
-            go.Pie(
-                values=[70, 30],
-                hole=0.78,
-                textinfo="none"
-            )
-        )
-
-        fig.add_annotation(
-            text=f"<b>{probability}%</b><br>Approved",
-            x=0.5,
-            y=0.5,
-            showarrow=False,
-            font=dict(size=24)
-        )
-
-        fig.update_layout(
-            showlegend=False,
-            height=450,
-            paper_bgcolor="#0E1117",
-            plot_bgcolor="#0E1117"
-        )
-
-        st.plotly_chart(
-            fig,
-            use_container_width=True
-        )
+    st.info(
+        f"Risk Level: {risk}"
+    )
 
 st.markdown("""
 <div class='footer'>
